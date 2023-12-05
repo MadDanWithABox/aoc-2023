@@ -1,4 +1,6 @@
-function solution(seeds, maps)
+# NOTE: takes inspiration from the solution provided by: https://github.com/morgoth1145/advent-of-code/blob/5311ed667714398cf02d9b2bc2a4e88f53f7b0dc/2023/05/solution.py
+
+function solution(seeds, map_definitions)
     seed_ranges = [seeds[i]:seeds[i]+seeds[i+1]-1 for i in 1:2:length(seeds)-1]
     min_val = typemax(Int)
 
@@ -6,7 +8,7 @@ function solution(seeds, maps)
     for seed_range in seed_ranges
         ranges = [seed_range]
         # go through each mapping 
-        for map in maps
+        for map in map_definitions
             remapped = [remap_range(range, map) for range in ranges]
             ranges = Iterators.flatten(remapped)
         end
@@ -47,26 +49,27 @@ function parse_file(file)
     lines = eachline(file)
     seeds = [parse(Int, x) for x in split(iterate(lines)[1])[2:end]]
     iterate(lines)
-    maps = [getMap(lines) for _ in 1:7]
-    return (seeds, maps)
+    map_definitions = [getMap(lines) for _ in 1:7]
+    return (seeds, map_definitions)
 end
 
 function getMap(lines)
     iterate(lines) # ignore map name
-    tuples = Tuple{UnitRange{Int},Int}[]
+    map_tuples = Tuple{UnitRange{Int},Int}[]
     while true
         line = iterate(lines, nothing)
         if line === nothing || isempty(line[1])
             break
         end
         s = [parse(Int, x) for x in split(line[1])]
-        push!(tuples, (s[2]:s[2]+s[3]-1, s[1]))
+        push!(map_tuples, (s[2]:s[2]+s[3]-1, s[1]))
     end
-    return sort(tuples; by=x -> x[1])
+    # sort the tuples out based on UnitRange
+    return sort(map_tuples; by=x -> x[1])
 end
 
-seeds, maps = (nothing, nothing)
+seeds, map_definitions = (nothing, nothing)
 open("input.txt") do file
-    global seeds, maps = parse_file(file)
+    global seeds, map_definitions = parse_file(file)
 end
-solution(seeds, maps)
+solution(seeds, map_definitions)
