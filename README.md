@@ -13,3 +13,4 @@ Most are entirely new to me, but some (TypeScript, for example) are an excuse to
 6. Kotlin
 7. TypeScript
 8. Swift
+9. Wolfram Mathematica
