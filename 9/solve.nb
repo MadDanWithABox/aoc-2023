@@ -1,0 +1,53 @@
+stringToNumberList[str_String] := Module[
+  {strList, numList},
+  (* Split the input string into a list of substrings using whitespace as the separator *)
+  strList = StringSplit[str];
+  
+  (* Convert each substring to a number and create a list of numbers *)
+  numList = ToExpression[strList];
+  
+  (* Return the resulting list of numbers *)
+  numList
+]
+
+readFileAndSplit[file_String] := Module[
+  {fileContent, lines},
+  (* Read the content of the file *)
+  fileContent = Import[file, "Text"];
+  
+  (* Split the content into a list of lines using StringSplit *)
+  lines = StringSplit[fileContent, "\n"];
+  
+  (* Return the resulting list of lines *)
+  lines
+]
+
+NextInSequence[seq_List] := Module[
+  {diffs, possibleFunction},
+  diffs = Differences[seq];
+  possibleFunction = FindSequenceFunction[diffs];
+  If[possibleFunction === $Failed,
+    Print["Unable to determine the pattern of the sequence."];
+    Return[$Failed];
+  ];
+  Last[seq] + possibleFunction[Length[seq]]
+]
+
+(* Example usage *)
+filePath = "input.txt";
+linesList = readFileAndSplit[filePath];
+
+results = {};
+For[i = 1, i <= Length[linesList], i++,
+  numList = stringToNumberList[linesList[[i]]];
+  (* If you're solving part 2, use Reverse[numList] *)
+  
+reversedList = Reverse[numList];
+
+(* Print["Original List: ",numList];
+Print["Reversed List: ", reversedList];*)
+ res = NextInSequence[reversedList];
+  AppendTo[results, res];
+]
+
+Print["Sum total:", Total[results]]
